@@ -6,10 +6,10 @@
 
 ## Common use cases
 
-### Adding utilities to be shared between pipelines
+### Developing utilities to be shared between pipelines
 
 Oftentimes you have utilities that have to be imported by multiple `pipelines`.
-To keep them as part of a Kedro `project`, **create a module (e.g. `utils`) at the same
+To keep them as part of a Kedro project, **create a module (e.g. `utils`) at the same
 level as the `pipelines` folder**, and organize the functionalities there.
 
 ```text
@@ -41,10 +41,9 @@ Example of importing a function `find_overlapping_keys` from `dictionary_utils.p
 from my_project.utils.dictionary_utils import find_overlapping_keys
 ```
 
-This concept contradicts with [micro packaging](../nodes_and_pipelines/modular_pipelines.md#ensuring-portability)
-which implies having pipelines independent of the main project.
+NOTE: pip install!
 
-### Using Kedro to produce an ML model used in other apps / packages
+### Using Kedro to produce an artifact used in other apps / packages
 
 A common use case of Kedro is that a software product built by a team has components that
 are logically independent of the Kedro project.
