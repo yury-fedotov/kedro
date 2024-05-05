@@ -46,11 +46,16 @@ This being the only constraint means that you can, for example:
 
 ## Common codebase extension scenarios
 
+This section provides examples of how you can handle some common cases of adding more
+code to or around your Kedro project.
+**Provided implementations are by no means the only ways to achieve target scenarios**,
+and serve only illustrative purposes.
+
 ### Sharing utilities between pipelines
 
 Oftentimes you have utilities that have to be imported by multiple `pipelines`.
 To keep them as part of a Kedro project, **create a module (e.g. `utils`) at the same
-level as the `pipelines` folder**, and organize the functionalities there.
+level as the `pipelines` folder**, and organize the functionalities there:
 
 ```text
 ├── conf
@@ -63,9 +68,9 @@ level as the `pipelines` folder**, and organize the functionalities there.
     │   ├── pipeline_registry.py
     │   ├── settings.py
     │   ├── pipelines
-    │   └── utils                       <-- Create a module to store your `utils`
+    │   └── utils                       <-- Create a module to store your utilities
     │       ├── __init__.py             <-- Required to import from it
-    │       ├── pandas_utils.py         <-- Locate a file with utility functions here
+    │       ├── pandas_utils.py         <-- Put a file with utility functions here
     │       ├── dictionary_utils.py     <-- Or a few files
     │       ├── visualization_utils     <-- Or sub-modules to organize even more utilities
     └── tests
@@ -86,13 +91,30 @@ which is to `cd` to the root of Kedro project and do `pip install -e .`.
 
 ### Kedro project in a monorepo setup
 
-A common use case of Kedro is that a software product built by a team has components that
-are logically independent of the Kedro project.
+The way a Kedro project is generated may build an impression that it should
+only be acting as a root of a `git` repo. This is not true: just like you can combine
+multiple Python packages in a single repo, you can combine multiple Kedro projects,
+or a Kedro project with other parts of your project's software stack.
 
-Let's use _a recommendation tool for equipment operators_ as an example. It would imply three parts:
-* An ML model, or more precisely, a workflow to prepare the data, train an estimator, ship it to registry
-* An optimizer that leverages the ML model and implements business logic to derive recommendations
-* An application serving as a user interface: this can be e.g., a `plotly` or `streamlit` dashboard
+```{note}
+A practice of combining multiple, often unrelated software components in a single version
+control repository not specific to Python and is called _**monorepo design**_.
+```
+
+A common use case of Kedro is that a software product built by a team has components that
+are well separable from the Kedro project.
+
+Let's use **a recommendation tool for production equipment operators** as an example.
+It would imply three parts:
+
+* An ML model, or more precisely, a workflow to prepare the data, train an estimator, ship it to some registry.
+* An optimizer that leverages the ML model and implements domain business logic to derive recommendations.
+  * A good design consideration might be to make it independent of the UI framework.
+* An application serving as a user interface.
+  * This can be e.g., a `plotly` or `streamlit` dashboard.
+  * Or even a full-fledged front-end app leveraging JS framework like `React`.
+  * Regardless, this component may know how to access the ML model, but it should
+    probably not know anything about how it was trained and was Kedro involved or not.
 
 A suggested solution in this case would be a **monorepo** design. Below is an example:
 
@@ -105,7 +127,7 @@ A suggested solution in this case would be a **monorepo** design. Below is an ex
     │   │   ├── notebooks
     │   │   ├── ...
     │   ├── optimizer                   <-- Standalone package.
-    │   └── dashboard                   <-- Standalone package, may import `optimizer`
+    │   └── dashboard                   <-- Standalone package, may import `optimizer`, but should not know anything about model training pipeline.
     ├── requirements.txt                <-- Linters, code formatters... Not dependencies of packages.
     ├── pyproject.toml                  <-- Settings for those, like `[tool.isort]`.
     └── ...
