@@ -98,7 +98,7 @@ or a Kedro project with other parts of your project's software stack.
 
 ```{note}
 A practice of combining multiple, often unrelated software components in a single version
-control repository not specific to Python and is called [_**monorepo design**_](https://monorepo.tools/).
+control repository is not specific to Python and called [_**monorepo design**_](https://monorepo.tools/).
 ```
 
 A common use case of Kedro is that a software product built by a team has components that
