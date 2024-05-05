@@ -5,8 +5,8 @@ After you [create a Kedro project](../get_started/new_project.md) and
 few boilerplate files: `nodes.py`, `pipeline.py`, `pipeline_registry.py`...
 
 While those may be sufficient for a small project, they quickly become large, hard to
-read and challenging to collaborate on as your codebase grows.
-Those files also sometimes make new users think that Kedro framework requires code
+read and collaborate on as your codebase grows.
+Those files also sometimes make new users think that Kedro requires code
 to be located only in those starter files, which is not true.
 
 This section elaborates what are the Kedro requirements in terms of organizing code
@@ -14,7 +14,37 @@ in files and modules.
 It also provides examples of common scenarios such as sharing utilities between
 pipelines and using Kedro in a monorepo setup.
 
-## Common scenarios
+## Where does Kedro look for code to be located
+
+The only technical constraint for arranging code in the project is that `pipeline_registry.py`
+file must be located in `<your_project>/src/<your_project>` directory, which is where
+it is created by default.
+
+This file must have a `register_pipelines()` function that returns a `tp.Dict[str, Pipeline]`
+mapping from pipeline name to corresponding `Pipeline` object.
+
+Other than that, **Kedro does not impose any constraints on where the files that define
+`Pipeline`s / `Node`s or functions wrapped by `node` should be located**.
+
+```{note}
+You actually can make Kedro look for pipeline registry in a different place by modifying the
+`__main__.py` file of your project, but such advanced customizations are not in scope of this article.
+```
+
+This being the only constraint means that you can, for example:
+* Add `utils.py` file to a pipeline folder and import utilities defined by multiple
+  functions in `nodes.py`.
+* Delete or rename a default `nodes.py` file, split it into multiple files or modules.
+* Instead of having a single `pipeline.py` in your pipeline folder, split it
+  into `historical_pipeline.py` and `inference_pipeline.py`.
+* Instead of registering many pipelines in `register_pipelines()` function one by one,
+  create a few `tp.Dict[str, Pipeline]` objects in different places of the project
+  and then make `register_pipelines()` return a union of those.
+* Store code that has nothing to do with Kedro `Pipeline` and `Node` concepts, or should
+  be reused by multiple pipelines of your project, in a module at the same level as the
+  `pipelines` folder of your project. This scenario is covered in more detail below.
+
+## Common codebase extension scenarios
 
 ### Sharing utilities between pipelines
 
@@ -80,9 +110,3 @@ A suggested solution in this case would be a **monorepo** design. Below is an ex
     ├── pyproject.toml                  <-- Settings for those, like `[tool.isort]`.
     └── ...
 ```
-
-### Importing another library of yours into a Kedro project
-
-Examples:
-* You made a package that traces data lineage in complex schemas, and want to use Kedro
-  to prepare tens of schemas, run them through the package, and see the accuracy.
