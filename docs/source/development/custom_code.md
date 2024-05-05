@@ -1,27 +1,22 @@
-# Using custom code in a Kedro project
+# Adding code beyond starter files
 
-This page covers common scenarios for locating and using custom code in a Kedro project.
+After you [create a Kedro project](../get_started/new_project.md) and
+[add a pipeline](../tutorial/create_a_pipeline.md), you notice that Kedro generates a
+few boilerplate files: `nodes.py`, `pipeline.py`, `pipeline_registry.py`...
 
-If you [created a Kedro project](../get_started/new_project.md) yourself before,
-or joined an existing one, you've likely noticed that `nodes.py` file(s) are commonly used
-to store functions that are then wrapped into [nodes](../nodes_and_pipelines/nodes.md).
+While those may be sufficient for a small project, they quickly become large, hard to
+read and challenging to collaborate on as your codebase grows.
+Those files also sometimes make new users think that Kedro framework requires code
+to be located only in those starter files, which is not true.
 
-While `nodes.py` might be a good location for those in small projects, this structure
-encounters limitations on larger projects:
-
-* You introduce utilities that are reusable in multiple `pipelines`, and wonder where to store them.
-* Large single files cause version control conflicts.
-* Not all functions in `nodes.py` and actually getting wrapped in `node()`: some are private.
-* You introduce classes or hierarchies of those, and want to store them in organized folder.
-* You have another package, e.g., developed before you created a Kedro project, and
-  not sure whether to bring it inside the Kedro project or keep separately.
-
-This section will showcase how to store custom code in your project to keep codebase
-easy to maintain and collaborate on, while not introducing dependency hell.
+This section elaborates what are the Kedro requirements in terms of organizing code
+in files and modules.
+It also provides examples of common scenarios such as sharing utilities between
+pipelines and using Kedro in a monorepo setup.
 
 ## Common scenarios
 
-### Developing utilities to be shared between pipelines
+### Sharing utilities between pipelines
 
 Oftentimes you have utilities that have to be imported by multiple `pipelines`.
 To keep them as part of a Kedro project, **create a module (e.g. `utils`) at the same
@@ -59,7 +54,7 @@ This is done via `pip install -e <root-of-kedro-project>`, the easiest way to ac
 which is to `cd` to the root of Kedro project and do `pip install -e .`.
 ```
 
-### Using Kedro to produce an artifact used in other apps / packages
+### Kedro project in a monorepo setup
 
 A common use case of Kedro is that a software product built by a team has components that
 are logically independent of the Kedro project.
