@@ -23,8 +23,8 @@ it is created by default.
 This file must have a `register_pipelines()` function that returns a `tp.Dict[str, Pipeline]`
 mapping from pipeline name to corresponding `Pipeline` object.
 
-Other than that, **Kedro does not impose any constraints on where the files that define
-`Pipeline`s / `Node`s or functions wrapped by `node` should be located**.
+Other than that, **Kedro does not impose any constraints on where you should keep files with
+`Pipeline`s, `Node`s, or functions wrapped by `node`**.
 
 ```{note}
 You actually can make Kedro look for pipeline registry in a different place by modifying the
