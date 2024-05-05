@@ -98,7 +98,7 @@ or a Kedro project with other parts of your project's software stack.
 
 ```{note}
 A practice of combining multiple, often unrelated software components in a single version
-control repository not specific to Python and is called _**monorepo design**_.
+control repository not specific to Python and is called [_**monorepo design**_](https://monorepo.tools/).
 ```
 
 A common use case of Kedro is that a software product built by a team has components that
@@ -107,21 +107,18 @@ are well separable from the Kedro project.
 Let's use **a recommendation tool for production equipment operators** as an example.
 It would imply three parts:
 
-* An ML model, or more precisely, a workflow to prepare the data, train an estimator, ship it to some registry.
-* An optimizer that leverages the ML model and implements domain business logic to derive recommendations.
-  * A good design consideration might be to make it independent of the UI framework.
-* An application serving as a user interface.
-  * This can be e.g., a `plotly` or `streamlit` dashboard.
-  * Or even a full-fledged front-end app leveraging JS framework like `React`.
-  * Regardless, this component may know how to access the ML model, but it should
-    probably not know anything about how it was trained and was Kedro involved or not.
+| **#** | **Part**                                                                                                     | **Considerations**                                                                                                                                                                                                                                                                                                                                                                                                    |
+|-------|--------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1     | An ML model, or more precisely, a workflow to prepare the data, train an estimator, ship it to some registry | <ul> <li>Here Kedro fits well, as it allows to develop those pipelines in a modular and extensible way.</li> </ul>                                                                                                                                                                                                                                                                                                    |
+| 2     | An optimizer that leverages the ML model and implements domain business logic to derive recommendations      | <ul> <li>A good design consideration might be to make it independent of the UI framework.</li> </ul>                                                                                                                                                                                                                                                                                                                  |
+| 3     | User interface (UI) application                                                                              | <ul> <li>This can be e.g., a [`plotly`](https://plotly.com/python/) or [`streamlit`](https://streamlit.io/) dashboard.</li> <li>Or even a full-fledged front-end app leveraging JS framework like [`React`](https://react.dev/).</li> <li>Regardless, this component may know how to access the ML model, but it should probably not know anything about how it was trained and was Kedro involved or not.</li> </ul> |
 
 A suggested solution in this case would be a **monorepo** design. Below is an example:
 
 ```text
 └── repo_root
     ├── packages
-    │   ├── kedro_project
+    │   ├── kedro_project               <-- A Kedro project for ML model training.
     │   │   ├── conf
     │   │   ├── data
     │   │   ├── notebooks
